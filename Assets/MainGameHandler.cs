@@ -23,7 +23,10 @@ public class MainGameHandler : MonoBehaviour
     [SerializeField] private int credits = 0;
     [SerializeField] private bool InGame;
 
-    [SerializeField]
+    [Header("Sound Effects")]
+    [SerializeField] private AudioSource AudioSource;
+    [SerializeField] private AudioClip Coin_In;
+    [SerializeField] private AudioClip Coin_Mech;
 
     // Start is called before the first frame update
     void Start()
@@ -59,9 +62,20 @@ public class MainGameHandler : MonoBehaviour
     {
         if (Input.GetButtonDown("InsertCoin"))
         {
-            credits += 1;
+            StartCoroutine(InsertCredits());
         }
     }
+
+    IEnumerator InsertCredits()
+    {
+        CueSound(Coin_Mech);
+        yield return new WaitForSeconds(1.11f);
+        CueSound(Coin_In);
+
+        credits += 1;
+    }
+
+
 
     void SetText()
     {
@@ -107,5 +121,11 @@ public class MainGameHandler : MonoBehaviour
     public void EndGame()
     {
         InGame = false;
+    }
+
+
+    public void CueSound(AudioClip sound)
+    {
+        AudioSource.PlayOneShot(sound);
     }
 }
