@@ -8,6 +8,7 @@ public class Player : MonoBehaviour
 {
 
     [Header("Game specific variables")]
+    [SerializeField] private bool GameReady;
     [SerializeField] private GameCoordinator gc;
 
     [Header("Movement")]
@@ -39,6 +40,7 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (GameReady) {
         Move();
         if(RecordTimer >= RecordThreshold)
         {
@@ -47,12 +49,14 @@ public class Player : MonoBehaviour
             if(CollectFlag)
             {
                 ActionList.Add("c_" + CollectIndex);
+                CollectFlag = false;
             }
             RecordTimer -= RecordThreshold;
         }
         RecordTimer += Time.deltaTime;
 
         DebugScript();
+        }
     }
 
     private void Move()
@@ -94,6 +98,13 @@ public class Player : MonoBehaviour
         gc.AddNewLoop(ActionList.ToArray());
         ActionList.Clear();
         ActionList.Add("p_" + transform.position.x + "|" + transform.position.y);
+    }
+
+    public void CollectItem(int itemNum)
+    {
+        gc.CollectItem(itemNum);
+        CollectFlag = true;
+        CollectIndex = itemNum;
     }
 
     private void FixedUpdate()

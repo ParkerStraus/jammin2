@@ -1,3 +1,4 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,15 +9,19 @@ using UnityEngine.SceneManagement;
 
 public class MainGameHandler : MonoBehaviour
 {
-    [Header("UI Elements")]
+    [Header("UI Elements/Camera")]
     [SerializeField] private TMP_Text p1_Text;
     [SerializeField] private TMP_Text p2_Text;
+    [SerializeField] private TMP_Text cue_Text;
     [SerializeField] private TMP_Text highscore_Text;
     [SerializeField] private TMP_Text credits_Text;
     [SerializeField] private TMP_Text gameOver_Text;
+    [SerializeField] private TMP_Text storyText;
+    [SerializeField] private GameObject VirCam;
 
 
     [Header("Common Values")]
+    [SerializeField] private int Level;
     [SerializeField] private int Player1 = 999999;
     [SerializeField] private int Player2 = 999999;
     [SerializeField] private int HighScore = 100000;
@@ -27,11 +32,12 @@ public class MainGameHandler : MonoBehaviour
     [SerializeField] private AudioSource AudioSource;
     [SerializeField] private AudioClip Coin_In;
     [SerializeField] private AudioClip Coin_Mech;
+    [SerializeField] private AudioClip[] MusicCues;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        Level = -1;
     }
 
     // Update is called once per frame
@@ -53,9 +59,29 @@ public class MainGameHandler : MonoBehaviour
                 Player2 = 0;
                 InGame = true;
                 credits -= 1;
-                SceneManager.LoadSceneAsync(1,LoadSceneMode.Additive);
+                StartCoroutine(GameIntro());
             }
         }
+    }
+
+    IEnumerator GameIntro()
+    {
+        storyText.gameObject.SetActive(true);
+        CueSound(MusicCues[0]);
+        yield return new WaitForSeconds(11);
+
+        storyText.gameObject.SetActive(false);
+        yield return new WaitForSeconds(0.25f);
+        //Animate Screen
+        LoadLevel(0);
+        yield return null;
+    }
+
+    void LoadLevel(int Level)
+    {
+
+        SceneManager.LoadScene(1+Level, LoadSceneMode.Additive);
+
     }
 
     void GetGameInput()
@@ -123,9 +149,41 @@ public class MainGameHandler : MonoBehaviour
         InGame = false;
     }
 
+    public int GetLevel()
+    {
+        return Level+1;
+    }
+
+    public void TextCue(string text, float time)
+    {
+        StartCoroutine(textCue(text, time));
+
+    }
+
+    IEnumerator textCue(string text, float time)
+    {
+        cue_Text.text = text;
+        cue_Text.gameObject.SetActive(true);
+        yield return new WaitForSeconds(time);
+        cue_Text.gameObject.SetActive(false);
+
+
+    }
+
+    public void PrepareCamera(GameObject player)
+    {
+        VirCam.GetComponent<CinemachineVirtualCamera>().Follow = player.transform;
+        VirCam.transform.position = player.transform.position;
+    }
+
 
     public void CueSound(AudioClip sound)
     {
         AudioSource.PlayOneShot(sound);
+    }
+
+    public void CueSound(int Sound)
+    {
+        AudioSource.PlayOneShot(MusicCues[Sound]);
     }
 }
