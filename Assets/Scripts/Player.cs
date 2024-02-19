@@ -13,6 +13,7 @@ public class Player : MonoBehaviour
 
     [Header("Movement")]
     [SerializeField] private float MoveSpeed;
+    [SerializeField] private float MoveSpeed_Sprint;
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private Vector2 moveVector;
     [SerializeField] private Vector2 moveRealized;
@@ -37,6 +38,11 @@ public class Player : MonoBehaviour
         RecordThreshold = gc.ActionRefreshRate;
     }
 
+    public void SetEnable(bool GameReady)
+    {
+        this.GameReady = GameReady;
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -56,6 +62,10 @@ public class Player : MonoBehaviour
         RecordTimer += Time.deltaTime;
 
         DebugScript();
+        }
+        else
+        {
+            moveRealized = Vector2.zero;
         }
     }
 
@@ -81,7 +91,11 @@ public class Player : MonoBehaviour
             moveVector += Vector2.left;
         }
 
-        moveRealized = moveVector  * MoveSpeed;
+        if (Input.GetButton("Btn1"))
+        {
+            moveRealized = moveVector * MoveSpeed_Sprint;
+        }
+        else moveRealized = moveVector * MoveSpeed;
     }
 
     void DebugScript()
@@ -92,7 +106,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    void EndLoop()
+    public void EndLoop()
     {
         ActionList.Add("e");
         gc.AddNewLoop(ActionList.ToArray());
@@ -102,9 +116,18 @@ public class Player : MonoBehaviour
 
     public void CollectItem(int itemNum)
     {
-        gc.CollectItem(itemNum);
+        gc.CollectItem(itemNum, false);
         CollectFlag = true;
         CollectIndex = itemNum;
+        gc.ItemMsg(itemNum);
+    }
+
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.transform.tag == "Copy")
+        {
+            gc.Paradox();
+        }
     }
 
     private void FixedUpdate()

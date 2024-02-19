@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 3726799882589127881}
   m_Layer: 0
   m_Name: CopyOBJ
-  m_TagString: Untagged
+  m_TagString: Copy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -117,7 +117,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3125919937796889363}
-  m_BodyType: 1
+  m_BodyType: 2
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -185,4 +185,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rb: {fileID: 0}
   anim: {fileID: 0}
+  rbVelocity: 0
+  CurrentVelocity: {x: 0, y: 0}
   GoingBack: 0
